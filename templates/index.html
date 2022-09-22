@@ -22,12 +22,11 @@
 
   <script>
     document.getElementById("form").onsubmit = function (e) {
-      debugger;
-      e.preventDefaut();
+      e.preventDefault();
       fetch('/todo/create', {
         method: 'POST',
         body: JSON.stringify({
-          description: document.getElementById("description").value,
+          'description': document.getElementById("desc").value,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -37,9 +36,8 @@
           return response.json();
         })
         .then(function (jsonresponse) {
-          console.log(jsonresponse);
           const liItem = document.createElement("li");
-          liItem.innerHTML = jsonResponse["description"];
+          liItem.innerHTML = jsonresponse["description"];
           document.getElementById("list").appendChild(liItem);
           document.getElementById("error").classname = "hidden";
         })

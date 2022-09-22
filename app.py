@@ -1,5 +1,4 @@
 
-from doctest import debug_script
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
@@ -22,13 +21,13 @@ db.create_all()
 
 @app.route('/todo/create', methods=['POST'])
 def create_todo():
+    body={}
     description = request.get_json()['description']
     todo = ToDo(description=description)
+    body['description'] = todo.description
     db.session.add(todo)
     db.session.commit()
-    return jsonify({
-        'description': todo.description
-    })
+    return jsonify(body)
 
 
 @app.route('/')

@@ -23,6 +23,7 @@
       <li>
         <input class="checkboxes" type="checkbox" data-id="{{ d.id }}" {% if d.completed %} checked {% endif %} />{{
         d.description }}
+        <button class="deleteTodo" data-id="{{ d.id }}">&cross;</button>
       </li>
       {% endfor %}
     </ul>
@@ -54,7 +55,6 @@
         });
     };
     const checkboxes = document.querySelectorAll('.checkboxes');
-    console.log(checkboxes)
     for(let i = 0; i < checkboxes.length; i++){
       const checkbox = checkboxes[i];
       const item_id = checkbox.getAttribute("data-id")
@@ -67,6 +67,16 @@
           headers: {
             'Content-Type': 'application/json'
           }
+        })
+      }
+    }
+    const deleteButton = document.querySelectorAll('.deleteTodo');
+    for(let i = 0; i < deleteButton.length; i++){
+      const deletebox = deleteButton[i];
+      const item_id = deletebox.getAttribute("data-id")
+      deletebox.onclick = function(e) {
+        fetch('/todo/'+item_id +'/delete-item', {
+          method: 'DELETE'
         })
       }
     }

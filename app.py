@@ -26,7 +26,7 @@ db.create_all()
 @app.route('/todo/create', methods=['POST'])
 def create_todo():
     body = {}
-    error= False
+    error = False
     try:
         description = request.get_json()['description']
         todo = ToDo(description=description)
@@ -34,7 +34,7 @@ def create_todo():
         db.session.add(todo)
         db.session.commit()
     except:
-        error =True
+        error = True
         db.session.rollback()
         print(sys.exc_info())
     finally:
@@ -43,9 +43,10 @@ def create_todo():
         abort(500)
     return jsonify(body)
 
+
 @app.route('/todo/<item_id>/update-checked', methods=['POST'])
 def updateCheckStatus(item_id):
-    body={}
+    body = {}
     try:
         checkStatus = request.get_json()['completed']
         todo = ToDo.query.get(item_id)
@@ -53,9 +54,24 @@ def updateCheckStatus(item_id):
         db.session.commit()
     except:
         db.session.rollback()
-    finally: 
+    finally:
         db.session.close()
     return redirect(url_for('index'))
+
+
+@app.route('/todo/<deleteId>/delete-item', methods=['DELETE'])
+def deleteItem(deleteId):
+    try:
+        todo = ToDo.query.get(deleteId)
+        db.session.delete(todo)
+        db.session.commit()
+    except:
+        db.session.rollback()
+    finally:
+        db.session.close()
+    return jsonify({'success': True})
+
+
 @app.route('/')
 def index():
     return render_template('./index.html', data=ToDo.query.order_by("id").all())

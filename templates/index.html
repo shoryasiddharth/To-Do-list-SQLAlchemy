@@ -5,6 +5,11 @@
       .hidden {
         display: none;
       }
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
     </style>
   </head>
   <body>
@@ -15,7 +20,10 @@
     <span class="hidden" id="error">Somethihng went wrong</span>
     <ul id="list">
       {% for d in data %}
-      <li>{{ d.description }}</li>
+      <li>
+        <input class="checkboxes" type="checkbox" data-id="{{ d.id }}" {% if d.completed %} checked {% endif %} />{{
+        d.description }}
+      </li>
       {% endfor %}
     </ul>
   </body>
@@ -23,13 +31,13 @@
   <script>
     document.getElementById("form").onsubmit = function (e) {
       e.preventDefault();
-      fetch('/todo/create', {
-        method: 'POST',
+      fetch("/todo/create", {
+        method: "POST",
         body: JSON.stringify({
-          'description': document.getElementById("desc").value,
+          description: document.getElementById("desc").value,
         }),
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       })
         .then(function (response) {
@@ -45,5 +53,22 @@
           document.getElementById("error").classname = "";
         });
     };
+    const checkboxes = document.querySelectorAll('.checkboxes');
+    console.log(checkboxes)
+    for(let i = 0; i < checkboxes.length; i++){
+      const checkbox = checkboxes[i];
+      const item_id = checkbox.getAttribute("data-id")
+      checkbox.onchange = function(e) {
+        fetch('/todo/' + item_id + '/update-checked', {
+          method: 'POST',
+          body: JSON.stringify({
+            'completed': e.target.checked
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+      }
+    }
   </script>
 </html>
